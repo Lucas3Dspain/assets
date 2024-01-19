@@ -151,98 +151,46 @@ The geometry under the proxy scopes should have:
 - as few prims as possible without loosing articulated pieces.
 - as few polygons while maintain volume and silhouette.
 
-### Articulation
-
-Articulations are movable elements within the asset. 
-It typically involves child primitives with strategically placed pivots and is identified by a kind:subcomponent designation.
-These articulations serve as the adjustable elements that contribute to the asset's flexibility and adaptability.
+### Articulations
 
 <img src="screenshots/articulated_assets_example.gif" alt="Example Assets" width="500"/>\
 
-Articulations can be ***rigid*** when only xform transformations are required and ***deformable*** 
-when the points/vertex need to be transformed non-uniformly, usually are made with a rig or deformers.
+Articulations are movable elements within the asset.
+It typically involves child primitives with strategically placed pivots and is identified by a kind:subcomponent designation.
+These articulations serve as the adjustable elements that contribute to the asset's flexibility and adaptability.
 
-todo: add gif showing difference (bucket-subcomponents vs tree-usdSkel)
+Articulations are ***rigid*** when only xform transformations are required.
 
-Articulation pieces can be adjusted to reduce asset repetition and adjust the pose to adapt to their surroundings, creating a more cohesive look in the scene.
+Articulations can be adjusted to reduce asset repetition and to adapt to their surroundings, creating a more cohesive look in the scene.
+
 note: this workflow allows maximum flexibility at the cost of instancing. see more in the Optimization & instancing section.
+
 todo: insert gif showing dressing (transform + pose)
 
-- How?
+#### Optimization & instancing
+Articulated assets come with a limitation – they cannot be both posed and instanced simultaneously.\
+This is due to the fact that when a parent prim is made instanceable, the child prims won't receive any edits.
+
+To address this limitation, a workaround can be employed, particularly when a few distinct poses are enough.
+
+One effective workaround involves creating a "pose" VariantSet within the Model's defaultPrim,
+acting as a repository for a library of poses. Variants are added to this VariantSet,
+offering a flexible solution for managing different poses that can be instanced.
+
+ignore note: is there a way to make the subcomponents instanceable so only a xform is live. but the mesh is instanced in any range of movement ?
+
+todo: Add link to gif showing asset variants in usdview
+
+todo: Add link to example_dressing_variants.usda
+
+Additionally, extra poses can be added from a Dressing/Shot definition. see more in the example file.
+
+todo: Add link to example_dressing_variants.usda
+
 
 ### Autorig & rig swapping
 
 Not done yet. Coming soon
-
-
-## Optimization & instancing
-
-Articulated assets have a limitation, they cant be posed and instanced at the same time.\
-This is because when a parent prim is instanceable = True, the child prims will not receive any edits. (better way to say this?).\
-There is a workaround that can be used to fix this if we can get away with a few poses.
-
-The workaround consists on creating a "pose" variantSet in the defaultPrim where we will add as many variants as needed.
-
-The variants can be added at the asset definition. It will look something like this:
-
-todo: Add link to gif showing asset variants in usdview
-todo: Add link to example_dressing_variants.usda
-
-But they can also be added in the assembly/shot definition. It will look something like this:
-
-todo: Add link to example_dressing_variants.usda
-
-Room.usd
-```
-#usda 1.0
-(
-    defaultPrim = "room"
-    upAxis = "Y"
-)
-
-def Xform "room"
-{
-    def Xform "dressingLevel_variant" (
-        kind = "group"
-    )
-    {
-        def Scope "Prototypes"
-        {
-            token visibility = "invisible"
-            
-            def Xform "Bucket_upsideDown1" (
-                prepend references = @./Bucket.usd@
-                variants = {
-                    string pose = "upside_down"
-                }
-                prepend variantSets = "pose"
-            )
-            {
-                variantSet "pose" = {
-                    "upside_down" {
-                        over "handle"
-                        {
-                            float3 xformOp:rotateXYZ = (0, 0, -90)
-                            uniform token[] xformOpOrder = ["xformOp:rotateXYZ"]
-                        }
-                    }
-                }
-            }
-        }
-
-        def Xform "Bucket_upsideDown1" (
-            instanceable = true
-            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
-        )
-        {
-            token visibility = "inherited"
-            double3 xformOp:translate = (-29, 0, 1)
-            uniform token[] xformOpOrder = ["xformOp:translate"]
-        }
-    }
-}
-```
-
 
 
 
