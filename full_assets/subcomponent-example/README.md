@@ -1,7 +1,36 @@
 
+TODO & Questions:
+- todo: Cleanup Example asset composition.
+- todo: add comparison between proxy and render. VP + Outliner
+- todo: add dressing workflow. Transform + posing
+- todo: add asset-level pose VariantSet variant exploration.
+- todo: add Credits to README
+- 
+- What is the proxyPrim relationship used for? VP selection workflows?
+
+- What do we call Composition and structure when talking about usd assets.\
+  Composition sounds like composition arcs and layer/file organization,
+while structure is the final resulting prim hierarchy?
+ 
+- Assemblies and subcomponent's composition/structure looks very similar.\
+  Any notable differences? Assemblies are not self-contained. Instancing?
+  pd: looking at assemblies it works that way, so it might not be that wierd after all.
+- Should subcomponent prim replicate component structure geo, mtl scopes.\
+  It looks counterintuitive to have meshes outside /geo?\
+- Can we come up with a go-to/recommended structure for subcomponents?.\
+Similar to Assemblies, support purposes and nested subcomponents.
+
+- Future considerations with Assemblies that are made out of Components attached to subcomponents.\
+ex: some tools attached to the WoodenTable.door subcomponent.\
+Examples continuing in this direction will soon need a rig. Can be handled with rig-swapping.
+
+- Is there any issue having meshes have kind subcomponent directly applied? or is better to only apply it to xforms? What about the use of purpose in that case?
+
+
 # How to take advantage of subcomponents in production
 
 <img src="screenshots/Bucket_articulated.gif" width="400"/>
+<img src="screenshots/WoodenTable_articulated.gif" width="400"/>
 
 ## What are Subcomponents?
 In USD terms, [subcomponents](https://openusd.org/release/glossary.html#usdglossary-subcomponent)
@@ -9,20 +38,6 @@ are a [kind](https://openusd.org/release/glossary.html#usdglossary-kind) that ca
 [see more](https://github.com/usd-wg/assets/blob/main/docs/asset-structure-guidelines.md).
 
 ## Composition
-
-todo: solve internal note, refine example compositions
-
-
-internal note: There are many ways to structure subcomponents.\ 
-I would like to share it with the group and study pros and cons with the hope to come up with a go-to structure.
-
-Main topics:
-- Should subcomponent prim replicate component structure geo, mtl scopes.\
-It looks counterintuitive to have geo outside /geo?\
-pd: looking at assemblies it works that way, so it might not be an issue. Is it different here?\
-we don't bring any asset from outside the component as component models should be Self-contained?
-- Is there any issue having meshes have kind subcomponent directly applied? or is better to only apply it to xforms? 
-
 
 **Simple Subcomponent** (Bucket example) Variations to consider:
 
@@ -141,6 +156,11 @@ Subcomponents should be outside of geo, right?
 
 ## Uses for Subcomponents
 
+- Proxy mesh generation
+- Articulations
+- Auto rigging
+- Rig-swapping
+
 ### Proxy mesh generation
 
 To generate the proxy purpose geometry, we can make it manually if needed or, more commonly,
@@ -150,6 +170,8 @@ kind:subcomponent to filter prims so that we don't merge them, that way we can s
 The geometry under the proxy scopes should have:
 - as few prims as possible without loosing articulated pieces.
 - as few polygons while maintain volume and silhouette.
+
+- todo: add comparison between proxy and render. VP + Outliner
 
 ### Articulations
 
@@ -161,11 +183,14 @@ These articulations serve as the adjustable elements that contribute to the asse
 
 Articulations are ***rigid*** when only xform transformations are required.
 
-Articulations can be adjusted to reduce asset repetition and to adapt to their surroundings, creating a more cohesive look in the scene.
+Articulations can be used to reduce asset repetition and to adapt to their surroundings, creating a more cohesive look in the scene.
+
+For instance, consider an Oven asset; rotating the door (articulated piece) achieves the open/closed pose.
+
+- todo: add dressing workflow. Transform + posing -- move bucket to position, rotate and adjust handle to adapt to terrain.
 
 note: this workflow allows maximum flexibility at the cost of instancing. see more in the Optimization & instancing section.
 
-todo: insert gif showing dressing (transform + pose)
 
 #### Optimization & instancing
 Articulated assets come with a limitation – they cannot be both posed and instanced simultaneously.\
@@ -177,100 +202,61 @@ One effective workaround involves creating a "pose" VariantSet within the Model'
 acting as a repository for a library of poses. Variants are added to this VariantSet,
 offering a flexible solution for managing different poses that can be instanced.
 
-ignore note: is there a way to make the subcomponents instanceable so only a xform is live. but the mesh is instanced in any range of movement ?
+ignore note: Is there a way to make the subcomponents instanceable so only a xform is authored. but the mesh is instanced in any range of movement ?
 
-todo: Add link to gif showing asset variants in usdview
+This are the variants defined in the pose VariantSet at the asset level.
+- todo: add asset-level pose VariantSet variant exploration.
 
+This is an example of how to use asset-level variants in dressing. 
 todo: Add link to example_dressing_variants.usda
 
 Additionally, extra poses can be added from a Dressing/Shot definition. see more in the example file.
 
+Usecase where we need to dress the cube upsidedown, lets assume thats a rare enough case that it shouldnt be defined in the asset.\
+But in this dressing scene we can use it to make use of instances.
+
+Example file of a dressing where the upside_down variant is added just for that dressing.
 todo: Add link to example_dressing_variants.usda
+
+
+### Deformable articulations with usdSkel
+
+Not done yet. ex: Tree
 
 
 ### Autorig & rig swapping
 
-Not done yet. Coming soon
+Not done yet. Coming later:
 
+- Abstractly describe auto-rig procedure. Implementation is up to the client.
+- Abstractly describe rig-swapping procedure.
+- Describe workflow to show potential value.
+  - If we have an articulated asset that will benefit from IK posing or other complex relationship between pieces.\
+We can do a rig swap, use the rig controllers to set the pose. Then switch back, giving the subcomponent groups their new transforms.
+  - A layout/Animator artist can select a Component Model and expose a rig right in the exact same pose that asset is at.\
+ex: The Bucket in the floor with the handle posed, when rig swapped the rig will match the pose.
+- Describe challenges: ex: Having the subcomponents in sync with the rig controls if using manual made rigs.\
+This will be a potential challenge and depends on the implementation.
 
+todo: Add examples showing workflows:
+- Gif from Maya VP as a SetDressing artist
+- Gif From Maya VP as an Animator rig-swapping a posed asset to start animating. --Bucket in floor.
 
+### Coming next
 
-
-
-
-
-
-
-
-
-## Objective
-In this page we are going to describe how subcomponents can be used in a vfx/animation production for different workflows.
-
-asset definition
-- definition
-- pivot
-- lod generation
-- autorig
-
-set dressing
-- use of subcomponent prim to pose the asset to reduce repetition and improve set adaptation.
-- optimizing poses with variants while reducing repetition
-
-animation
-- swap for rig and back (rigid vs deformable articulation round tripping)
-
-Show ways to laverage usd composition and subcomponents to describe efficient articulated assets.
- - what are subcomponents? (no need)
- - What are articulated assets?
- - Benefits and challenges
- - Composition examples
- - laverage examples
- - limitations
-
-
-## What are Subcomponents and Articulated Assets?
-
-<img src="screenshots/articulated_assets_example.gif" alt="Example Assets" width="500"/>\
-
-In USD terms, [subcomponents](https://openusd.org/release/glossary.html#usdglossary-subcomponent) are a [kind](https://openusd.org/release/glossary.html#usdglossary-kind) that can be assigned to a prim. [see more](https://github.com/usd-wg/assets/blob/main/docs/asset-structure-guidelines.md).
-
-Subcomponents allow easy selection of the articulated pieces.\
-DCCs have different behaviors, but usually they allow the user to pick a selection-mode that will 
-make selections based on the prim's kind.
-
-For this guide, we will say that an asset is *Articulated* if it has any articulated pieces.\
-Articulated pieces are child prims with a well-placed pivot and kind:subcomponent.
-
-For instance, consider an Oven asset; rotating the door (articulated piece) achieves the open/closed pose.
-
-
-### What are articulated assets?
-
-
-Like in many other usd definitions, assets/models can be described as detailed as needed wanted. ex: you might have a building as a single component asset with one prim. Or have a very detailed assembly model that uses other assets like flowerpots, windows shutters...etc with that said, articulation is an extra level of detail/complexity and is not needed for every asset.
-
-So what do I mean when I say articulated? Articulation can be __*rigid*__ , when only an xform transformation is required or __*deformable*__ when the points/vertex need to be transformed non-uniformly. At the end of the day rigid articulations can be described as a deformable ones but that is inefficient.
-
-When using subcomponents and for this page, we are gonna only make use of static rigid articulations.
-
-### Bennefits and challenges
-Benefits
-
-Challenges
-
-Articulated assets can't be instanceable, at least not if we want to have an edit on a child prim. There is a way to optimize this by generating variant at the rootprim, making a "library" of articulation posibilities
-
-### Composition examples
-- simple rigid 
-### laverage examples
-- generate lods for articulable assets
-- autorig articulable assets
+- Deformable Articulations -- USDSkel
+- Autorig from subcomponents
+- Autorig from usdSkel
+- Assets where mechanical pieces need to work together -- rig-swapping
+- Asset level anim cycles -- fan rotation
+- Animation Proxy/lod workflow.
 
 ### Limitations
-![Corck screw openner](screenshots/CorckScrewOpenner.png)
+<img src="screenshots/CorckScrewOpenner.png" width="400"/>
+<img src="screenshots/Workbench_assembly.png" width="400"/>
 
 Assets where mechanical pieces need to work together, cant have that behaviour described at the current state of openUsd.\
-It will need a 3rd party rig like a maya rig.
+It will need a 3rd party rig like a maya rig and rig-swapping. Also assets with cables/ropes connecting articulated pieces.
 
 ## Credits
 
