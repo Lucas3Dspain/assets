@@ -1,0 +1,49 @@
+#usda 1.0
+(
+    defaultPrim = "Bucket"
+    endTimeCode = 1
+    framesPerSecond = 24
+    metersPerUnit = 0.01
+    startTimeCode = 1
+    timeCodesPerSecond = 24
+    upAxis = "Y"
+)
+
+def Xform "Bucket" (
+    assetInfo = {
+        dictionary credits = {
+            string Bucket = "Sketchfab | Cihan Gurbuz - CC | https://sketchfab.com/3d-models/metal-bucket-ca65bbda65534f3fb077951beee8ed3a"
+        }
+        asset identifier = @Bucket.usd@
+        string name = "Bucket"
+        string version = "1.0"
+    }
+    prepend payload = @./Bucket_payload.usd@
+    prepend variantSets = "pose"
+)
+{
+    variantSet "pose" = {
+        "handle_down" {
+            over "handle"
+            {
+                float3 xformOp:rotateXYZ = (0, 0, -131.39107)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+            }
+
+        }
+    }
+}
+
+def Camera "mainCam" (
+    kind = "component"
+)
+{
+    float2 clippingRange = (0.1, 10000)
+    float focusDistance = 5
+    float horizontalAperture = 35.0
+    float verticalAperture = 35.0
+    float3 xformOp:rotateXYZ = (-16.538353, -53.4, 1.3336221e-15)
+    double3 xformOp:translate = (-71.35450916078732, 49.92862019134643, 51.82076162971509)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
+

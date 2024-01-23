@@ -1,0 +1,10 @@
+#usda 1.0
+(
+    defaultPrim = "Bucket"
+    metersPerUnit = 0.01
+    upAxis = "Y"
+    subLayers = [
+        @mtl/Bucket_mtl.usd@,
+        @geo/Bucket_geo.usd@
+    ]
+)

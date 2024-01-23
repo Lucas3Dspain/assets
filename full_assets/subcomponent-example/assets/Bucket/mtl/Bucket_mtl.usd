@@ -1,0 +1,138 @@
+#usda 1.0
+
+over "Bucket"
+{
+    def Scope "mtl"
+    {
+        def Material "Bucket_preview_mat" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+            customData = {
+                dictionary Autodesk = {
+                    token ldx_inputPos = "-582.473 408.493"
+                    token ldx_outputPos = "1104 399"
+                }
+            }
+        )
+        {
+            token outputs:surface.connect = </Bucket/mtl/Bucket_preview_mat/Bucket_preview.outputs:surface>
+            uniform float2 ui:nodegraph:node:pos = (0.055555556, 0.055555556)
+
+            def Shader "tex_base" (
+                apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdUVTexture"
+                float4 inputs:fallback = (1, 1, 1, 1)
+                asset inputs:file = @../textures/Kova_baseColor.jpg@
+                float2 inputs:st.connect = </Bucket/mtl/Bucket_preview_mat/UsdPrimvarReader1.outputs:result>
+                token inputs:wrapS = "repeat"
+                token inputs:wrapT = "repeat"
+                float outputs:a
+                float3 outputs:rgb
+                uniform float2 ui:nodegraph:node:pos = (3.0814223, -2.1597834)
+            }
+
+            def Shader "tex_metallic" (
+                apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdUVTexture"
+                float4 inputs:fallback = (0, 0, 0, 1)
+                asset inputs:file = @../textures/Kova_metallicRoughness_metal.jpg@
+                float2 inputs:st.connect = </Bucket/mtl/Bucket_preview_mat/UsdPrimvarReader1.outputs:result>
+                token inputs:wrapS = "repeat"
+                token inputs:wrapT = "repeat"
+                float outputs:r
+                uniform float2 ui:nodegraph:node:pos = (3.0814223, 0.3902172)
+            }
+
+            def Shader "tex_normal" (
+                apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdUVTexture"
+                float4 inputs:bias = (-1, -1, -1, -1)
+                float4 inputs:fallback = (0, 0, 1, 1)
+                asset inputs:file = @../textures/Kova_normal.jpg@
+                float4 inputs:scale = (2, 2, 2, 2)
+                token inputs:sourceColorSpace = "raw"
+                float2 inputs:st.connect = </Bucket/mtl/Bucket_preview_mat/UsdPrimvarReader1.outputs:result>
+                token inputs:wrapS = "repeat"
+                token inputs:wrapT = "repeat"
+                float3 outputs:rgb
+                uniform float2 ui:nodegraph:node:pos = (3.038511, 2.9024777)
+            }
+
+            def Shader "tex_occlusion" (
+                apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdUVTexture"
+                float4 inputs:fallback = (1, 0, 0, 1)
+                asset inputs:file = @../textures/Kova_metallicRoughness_occl.jpg@
+                float2 inputs:st.connect = </Bucket/mtl/Bucket_preview_mat/UsdPrimvarReader1.outputs:result>
+                token inputs:wrapS = "repeat"
+                token inputs:wrapT = "repeat"
+                float outputs:r
+                uniform float2 ui:nodegraph:node:pos = (3.0706942, 5.4095664)
+            }
+
+            def Shader "Bucket_preview" (
+                apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor.connect = </Bucket/mtl/Bucket_preview_mat/tex_base.outputs:rgb>
+                color3f inputs:emissiveColor = (0, 0, 0)
+                float inputs:metallic.connect = </Bucket/mtl/Bucket_preview_mat/tex_metallic.outputs:r>
+                normal3f inputs:normal.connect = </Bucket/mtl/Bucket_preview_mat/tex_normal.outputs:rgb>
+                float inputs:occlusion.connect = </Bucket/mtl/Bucket_preview_mat/tex_occlusion.outputs:r>
+                float inputs:roughness.connect = </Bucket/mtl/Bucket_preview_mat/tex_roughness.outputs:r>
+                token outputs:surface
+                uniform float2 ui:nodegraph:node:pos = (4.775889, 2.2179945)
+            }
+
+            def Shader "tex_roughness" (
+                apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdUVTexture"
+                float4 inputs:fallback = (1, 0, 0, 1)
+                asset inputs:file = @../textures/Kova_metallicRoughness_rough_scale0.jpg@
+                float2 inputs:st.connect = </Bucket/mtl/Bucket_preview_mat/UsdPrimvarReader1.outputs:result>
+                token inputs:wrapS = "repeat"
+                token inputs:wrapT = "repeat"
+                float outputs:r
+                uniform float2 ui:nodegraph:node:pos = (3.0814223, 8.034667)
+            }
+
+            def Shader "UsdPrimvarReader1" (
+                prepend apiSchemas = ["NodeGraphNodeAPI"]
+            )
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                string inputs:varname = "st"
+                float2 outputs:result
+                uniform float2 ui:nodegraph:node:pos = (-1.1466944, 2.0797722)
+            }
+        }
+    }
+
+    over "handle"
+    {
+        over "geo" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </Bucket/mtl/Bucket_preview_mat>
+        }
+    }
+
+    over "geo" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Bucket/mtl/Bucket_preview_mat>
+    }
+}
+

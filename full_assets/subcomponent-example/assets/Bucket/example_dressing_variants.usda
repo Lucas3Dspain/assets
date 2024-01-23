@@ -1,0 +1,235 @@
+#usda 1.0
+(
+    defaultPrim = "world"
+    endTimeCode = 100
+    startTimeCode = 1
+    upAxis = "Y"
+)
+
+def Xform "world"
+{
+    def Cylinder "ground"
+    {
+        uniform token axis = "Y"
+        double height = 0.02
+        double radius = 1
+        float3 xformOp:scale = (50, 50, 50)
+        double3 xformOp:translate = (0, -0.5, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Xform "Bucket2" (
+        prepend references = @./Bucket.usd@
+    )
+    {
+        float3 xformOp:rotateXYZ = (-90.66173, 167.51703, -73.980156)
+        double3 xformOp:translate = (13.28756332397461, 9.751704671163544, -4.7586774826049805)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+
+        over "handle"
+        {
+            float3 xformOp:rotateXYZ = (0, 0, 58.635155)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+        }
+    }
+
+    def Xform "assetLevel_variant" (
+        kind = "group"
+    )
+    {
+        def Xform "Bucket" (
+            instanceable = true
+            prepend references = @./Bucket.usd@
+            variants = {
+                string pose = "handle_down"
+            }
+        )
+        {
+            float3 xformOp:rotateXYZ = (0, 118.25369, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (-3.8623206615448, -0.109118602495208, -18.918254852294922)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket1" (
+            instanceable = true
+            prepend references = @./Bucket.usd@
+            variants = {
+                string pose = "handle_down"
+            }
+        )
+        {
+            float3 xformOp:rotateXYZ = (0, 235.3145, 0)
+            float3 xformOp:scale = (0.7718121, 0.7718121, 0.7718121)
+            double3 xformOp:translate = (-11.400497436523438, -0.109118602495208, 7.830782890319824)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket3" (
+            instanceable = true
+            prepend references = @./Bucket.usd@
+            variants = {
+                string pose = "handle_down"
+            }
+        )
+        {
+            float3 xformOp:rotateXYZ = (176.17465, 26.380203, 176.45435)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (-3.8623206615448, 11.973945389607719, -18.918254852294922)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket4" (
+            instanceable = true
+            prepend references = @./Bucket.usd@
+            variants = {
+                string pose = "handle_down"
+            }
+        )
+        {
+            float3 xformOp:rotateXYZ = (84.148384, 82.82716, 80.24517)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (-3.3169407672821665, 24.727187316037153, -17.90340985982521)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+    }
+
+    def Xform "dressingLevel_variant" (
+        kind = "group"
+    )
+    {
+        def Scope "Prototypes"
+        {
+            token visibility = "invisible"
+
+            def Xform "Bucket_upsideDown1" (
+                prepend references = @./Bucket.usd@
+                variants = {
+                    string pose = "upside_down"
+                }
+                prepend variantSets = "pose"
+            )
+            {
+                token visibility = "inherited"
+                variantSet "pose" = {
+                    "upside_down" {
+                        token visibility = "invisible"
+
+                        over "handle"
+                        {
+                            float3 xformOp:rotateXYZ = (0, 0, -90)
+                            double3 xformOp:translate = (2.615928312274254, 1.2719510832967968, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+                        }
+
+                        over "geo"
+                        {
+                            over "proxy"
+                            {
+                                over "bucket"
+                                {
+                                    float3 xformOp:rotateXYZ = (0, 0, 184.79625)
+                                    double3 xformOp:translate = (0, 31.826409643925043, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+                                }
+                            }
+
+                            over "render"
+                            {
+                                over "bucket"
+                                {
+                                    float3 xformOp:rotateXYZ = (0, 0, 184.79625)
+                                    double3 xformOp:translate = (0, 31.826409643925043, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        def Xform "Bucket_upsideDown1" (
+            instanceable = true
+            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
+        )
+        {
+            token visibility = "inherited"
+            float3 xformOp:rotateXYZ = (0, -0, 0)
+            float3 xformOp:scale = (0.2664669, 0.2664669, 0.2664669)
+            double3 xformOp:translate = (-29, 0, 1)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket_upsideDown5" (
+            instanceable = true
+            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
+        )
+        {
+            token visibility = "inherited"
+            float3 xformOp:rotateXYZ = (0, 251.14278, 0)
+            float3 xformOp:scale = (0.2664669, 0.2664669, 0.2664669)
+            double3 xformOp:translate = (-35.98380780602366, 0, -9.38950908372651)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket_upsideDown6" (
+            instanceable = true
+            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
+        )
+        {
+            token visibility = "inherited"
+            float3 xformOp:rotateXYZ = (0, 156.50134, 0)
+            float3 xformOp:scale = (0.2664669, 0.2664669, 0.2664669)
+            double3 xformOp:translate = (-9.20992120870811, 2.1316282072803006e-14, 23.297963304214548)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket_upsideDown7" (
+            instanceable = true
+            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
+        )
+        {
+            token visibility = "inherited"
+            float3 xformOp:rotateXYZ = (0, 126.38685, 0)
+            float3 xformOp:scale = (0.2664669, 0.2664669, 0.2664669)
+            double3 xformOp:translate = (-20.291050874478486, 0, -12.741893345207606)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket_upsideDown8" (
+            instanceable = true
+            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
+        )
+        {
+            token visibility = "inherited"
+            float3 xformOp:rotateXYZ = (0, 60.415703, 0)
+            float3 xformOp:scale = (0.2664669, 0.2664669, 0.2664669)
+            double3 xformOp:translate = (-26.68529398749778, 0, -24.931849080923186)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+
+        def Xform "Bucket_upsideDown9" (
+            instanceable = true
+            prepend references = </world/dressingLevel_variant/Prototypes/Bucket_upsideDown1>
+        )
+        {
+            token visibility = "inherited"
+            float3 xformOp:rotateXYZ = (0, -72.02544, 0)
+            float3 xformOp:scale = (0.2664669, 0.2664669, 0.2664669)
+            double3 xformOp:translate = (-17.38812809960141, 0, -34.44258166068684)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+        }
+    }
+}
+
+def Camera "mainCam" (
+    kind = "assembly"
+)
+{
+    float3 xformOp:rotateXYZ = (-7.9965625, -51, -1.2634878e-15)
+    double3 xformOp:translate = (-248.00243987067947, 73.61603076706365, 205.45374799017515)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
+

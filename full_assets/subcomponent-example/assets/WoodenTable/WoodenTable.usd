@@ -1,0 +1,21 @@
+#usda 1.0
+(
+    defaultPrim = "WoodenTable"
+    upAxis = "Y"
+    metersPerUnit = 0.01
+)
+
+def Xform "WoodenTable" (
+    assetInfo = {
+        dictionary credits = {
+            string WoodenTable = "PolyHeaven | Gabriel Radić - CC0 | https://polyhaven.com/a/WoodenTable_03"
+        }
+        asset identifier = @WoodenTable.usd@
+        string name = "WoodenTable"
+        string version = "1.0"
+    }
+    prepend payload = @./WoodenTable_payload.usd@
+)
+{
+}
+

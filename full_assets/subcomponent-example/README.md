@@ -2,29 +2,39 @@
 TODO & Questions:
 - todo: Cleanup Example asset composition.
 - todo: add comparison between proxy and render. VP + Outliner
-- todo: add dressing workflow. Transform + posing
-- todo: add asset-level pose VariantSet variant exploration.
-- todo: add Credits to README
-- 
 - What is the proxyPrim relationship used for? VP selection workflows?
 
-- What do we call Composition and structure when talking about usd assets.\
-  Composition sounds like composition arcs and layer/file organization,
+
+- What do we mean by Composition and Structure when talking about usd assets.\
+Composition sounds to me like composition arcs and layer/file organization,
 while structure is the final resulting prim hierarchy?
- 
+
+
+- Finding a way to make the subcomponents be reseteable while hacing a nicely placed pivot.\
+An idea is to use xformOp:transform:pivot
+
+
 - Assemblies and subcomponent's composition/structure looks very similar.\
   Any notable differences? Assemblies are not self-contained. Instancing?
   pd: looking at assemblies it works that way, so it might not be that wierd after all.
 - Should subcomponent prim replicate component structure geo, mtl scopes.\
   It looks counterintuitive to have meshes outside /geo?\
 - Can we come up with a go-to/recommended structure for subcomponents?.\
-Similar to Assemblies, support purposes and nested subcomponents.
+  Similar to Assemblies, support purposes and nested subcomponents.
+- Is there any issue having meshes have kind subcomponent directly applied? What about the use of purpose in that case?\
+Is better to only apply it to xforms? What about nested subcomponents? 
+
+
+- Is there a way to make the subcomponents instanceable so only a xform is authored? Will hydra reuse prototypes in that case?\
+This will be very similar in Assembly Models.\
+Stage with Box(C) + FruitBox(A) + BreadBox(A) where FruitBox=(Box + Fruit) and BreadBox=(Box + Bread); 
+I would expect Box to not be triplicated in memory. Is this a case where Hydra will de-duplicate the box? Is that right? How could I tell?
+
 
 - Future considerations with Assemblies that are made out of Components attached to subcomponents.\
-ex: some tools attached to the WoodenTable.door subcomponent.\
-Examples continuing in this direction will soon need a rig. Can be handled with rig-swapping.
+  ex: some tools attached to the WoodenTable.door subcomponent.\
+  Examples continuing in this direction will soon need a rig. Can be handled with rig-swapping.
 
-- Is there any issue having meshes have kind subcomponent directly applied? or is better to only apply it to xforms? What about the use of purpose in that case?
 
 
 # How to take advantage of subcomponents in production
@@ -187,7 +197,8 @@ Articulations can be used to reduce asset repetition and to adapt to their surro
 
 For instance, consider an Oven asset; rotating the door (articulated piece) achieves the open/closed pose.
 
-- todo: add dressing workflow. Transform + posing -- move bucket to position, rotate and adjust handle to adapt to terrain.
+This is an example of dressing a scene with a Component assets with subcomponents:
+[Dressing_workflow.mov](screenshots%2FDressing_workflow.mov)
 
 note: this workflow allows maximum flexibility at the cost of instancing. see more in the Optimization & instancing section.
 
@@ -202,22 +213,23 @@ One effective workaround involves creating a "pose" VariantSet within the Model'
 acting as a repository for a library of poses. Variants are added to this VariantSet,
 offering a flexible solution for managing different poses that can be instanced.
 
-ignore note: Is there a way to make the subcomponents instanceable so only a xform is authored. but the mesh is instanced in any range of movement ?
 
-This are the variants defined in the pose VariantSet at the asset level.
-- todo: add asset-level pose VariantSet variant exploration.
+These are the variants defined in the pose VariantSet at the asset level.
+See more in the [example file](assets/Bucket/example_dressing.usda) to see how to use asset-level pose variants in dressing.
+
+<img src="screenshots/asset-level_variants.gif" width="400"/>
 
 This is an example of how to use asset-level variants in dressing. 
-todo: Add link to example_dressing_variants.usda
+[example_dressing.usda](assets/Bucket/example_dressing.usda)
 
-Additionally, extra poses can be added from a Dressing/Shot definition. see more in the example file.
+Additionally, extra poses can be added from a Dressing/Shot definition. See more in the [example file](assets/Bucket/example_dressing_variants.usda).\
+Use case where we need to dress the Bucket upsidedown and use it many times, lets assume that's a rare enough case that it shouldnt be defined in the asset.\
+In this dressing scene we can use the upside_down variant to make use of instances.
 
-Usecase where we need to dress the cube upsidedown, lets assume thats a rare enough case that it shouldnt be defined in the asset.\
-But in this dressing scene we can use it to make use of instances.
+<img src="screenshots/dressing_customVariants.gif" width="640"/>
 
 Example file of a dressing where the upside_down variant is added just for that dressing.
-todo: Add link to example_dressing_variants.usda
-
+[example_dressing_variants.usda](assets/Bucket/example_dressing_variants.usda)
 
 ### Deformable articulations with usdSkel
 
@@ -260,9 +272,14 @@ It will need a 3rd party rig like a maya rig and rig-swapping. Also assets with 
 
 ## Credits
 
--- Model Credits --
-
+Articulation asset example media.
 https://sapien.ucsd.edu/browse
+
+Bucket Asset by Cihan Gurbuz \
+https://sketchfab.com/3d-models/metal-bucket-ca65bbda65534f3fb077951beee8ed3a
+
+WoodenTable Asset by Gabriel Radić \
+https://polyhaven.com/a/WoodenTable_03
 
 ## License
 

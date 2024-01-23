@@ -1,0 +1,73 @@
+#usda 1.0
+(
+    endTimeCode = 100
+    startTimeCode = 1
+    upAxis = "Y"
+    defaultPrim = "world"
+)
+
+def Xform "world"
+{
+    def Cylinder "ground"
+    {
+        uniform token axis = "Y"
+        double height = 0.02
+        double radius = 1
+        float3 xformOp:scale = (50, 50, 50)
+        double3 xformOp:translate = (0, -0.49054962947371905, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def "Bucket2" (
+        instanceable = false
+        prepend references = @./Bucket.usd@
+    )
+    {
+        float3 xformOp:rotateXYZ = (-90.66173, 167.51703, -73.980156)
+        double3 xformOp:translate = (13.28756332397461, 9.751704671163544, -4.7586774826049805)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+
+        over "handle"
+        {
+            float3 xformOp:rotateXYZ = (0, 0, 58.635155)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+        }
+    }
+
+    def "Bucket1" (
+        prepend references = @./Bucket.usd@
+    )
+    {
+        float3 xformOp:rotateXYZ = (0, 235.3145, 0)
+        float3 xformOp:scale = (0.7718121, 0.7718121, 0.7718121)
+        double3 xformOp:translate = (-11.400497436523438, -0.109118602495208, 7.830782890319824)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+
+        over "handle"
+        {
+            float3 xformOp:rotateXYZ = (0, 0, 415.27628)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+        }
+    }
+
+    def "Bucket" (
+        instanceable = true
+        prepend references = @./Bucket.usd@
+        variants = {
+            string pose = "handle_down"
+        }
+    )
+    {
+        float3 xformOp:rotateXYZ = (0, 118.25369, 0)
+        double3 xformOp:translate = (-3.8623206615448, -0.109118602495208, -18.918254852294922)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+}
+
+def Camera "mainCam"
+{
+    float3 xformOp:rotateXYZ = (-16.25, -51, 0)
+    double3 xformOp:translate = (-168.6054193808317, 77.99584538504295, 141.15930851423977)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
+
