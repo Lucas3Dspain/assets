@@ -2,6 +2,8 @@
 TODO & Questions:
 - todo: Cleanup Example asset composition.
 - todo: add comparison between proxy and render. VP + Outliner
+
+
 - What is the proxyPrim relationship used for? VP selection workflows?
 
 
@@ -198,7 +200,7 @@ Articulations can be used to reduce asset repetition and to adapt to their surro
 For instance, consider an Oven asset; rotating the door (articulated piece) achieves the open/closed pose.
 
 This is an example of dressing a scene with a Component assets with subcomponents:
-[Dressing_workflow.mov](screenshots%2FDressing_workflow.mov)
+[Dressing_workflow.mp4](screenshots/Dressing_workflow.mp4)
 
 note: this workflow allows maximum flexibility at the cost of instancing. see more in the Optimization & instancing section.
 
@@ -233,26 +235,11 @@ Example file of a dressing where the upside_down variant is added just for that 
 
 ### Deformable articulations with usdSkel
 
-Not done yet. ex: Tree
-
+Not done yet. ex: _Tree_ with _branch_ articulation.
 
 ### Autorig & rig swapping
 
-Not done yet. Coming later:
-
-- Abstractly describe auto-rig procedure. Implementation is up to the client.
-- Abstractly describe rig-swapping procedure.
-- Describe workflow to show potential value.
-  - If we have an articulated asset that will benefit from IK posing or other complex relationship between pieces.\
-We can do a rig swap, use the rig controllers to set the pose. Then switch back, giving the subcomponent groups their new transforms.
-  - A layout/Animator artist can select a Component Model and expose a rig right in the exact same pose that asset is at.\
-ex: The Bucket in the floor with the handle posed, when rig swapped the rig will match the pose.
-- Describe challenges: ex: Having the subcomponents in sync with the rig controls if using manual made rigs.\
-This will be a potential challenge and depends on the implementation.
-
-todo: Add examples showing workflows:
-- Gif from Maya VP as a SetDressing artist
-- Gif From Maya VP as an Animator rig-swapping a posed asset to start animating. --Bucket in floor.
+Not done yet.
 
 ### Coming next
 
