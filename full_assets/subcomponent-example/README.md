@@ -4,27 +4,12 @@ TODO & Questions:
 - todo: add comparison between proxy and render. VP + Outliner
 
 
-- What is the proxyPrim relationship used for? VP selection workflows?
-
-
-- What do we mean by Composition and Structure when talking about usd assets.\
-Composition sounds to me like composition arcs and layer/file organization,
-while structure is the final resulting prim hierarchy?
-
-
-- Finding a way to make the subcomponents be reseteable while hacing a nicely placed pivot.\
-An idea is to use xformOp:transform:pivot
-
-
 - Assemblies and subcomponent's composition/structure looks very similar.\
   Any notable differences? Assemblies are not self-contained. Instancing?
   pd: looking at assemblies it works that way, so it might not be that wierd after all.
 - Should subcomponent prim replicate component structure geo, mtl scopes.\
   It looks counterintuitive to have meshes outside /geo?\
 - Can we come up with a go-to/recommended structure for subcomponents?.\
-  Similar to Assemblies, support purposes and nested subcomponents.
-- Is there any issue having meshes have kind subcomponent directly applied? What about the use of purpose in that case?\
-Is better to only apply it to xforms? What about nested subcomponents? 
 
 
 - Is there a way to make the subcomponents instanceable so only a xform is authored? Will hydra reuse prototypes in that case?\
@@ -47,12 +32,29 @@ I would expect Box to not be triplicated in memory. Is this a case where Hydra w
 ## What are Subcomponents?
 In USD terms, [subcomponents](https://openusd.org/release/glossary.html#usdglossary-subcomponent)
 are a [kind](https://openusd.org/release/glossary.html#usdglossary-kind) that can be assigned to a prim.
-[see more](https://github.com/usd-wg/assets/blob/main/docs/asset-structure-guidelines.md).
+
+> **Callout:**
+> Before continue reading, please have a look at the **Asset Structure Guidelines** if you are not familiar with it,
+as it explains some concepts I'm going to be talking about.
+> https://github.com/usd-wg/assets/blob/main/docs/asset-structure-guidelines.md
+
 
 ## Composition
 
+Main considerations:
+- Where is the kind applied? Directly to the mesh prim or to a parent xform.
+  - If using render purposes it has to be into a parent xform prim, so we can have the render, proxy scopes under it.
+- Using render purpose?
+  - If so, the subcomponent kind has to be applied into a parent xform prim, so we can have the render, proxy scopes under it.\
+    This way both representations get the same transformations.
+- Should Subcomponent prims be under asset/ or under asset/geo ?
+  - If we [mirror the overall structure of a Component for each Subcomponent](https://github.com/Lucas3Dspain/assets/blob/guidelines-subcomponent/docs/asset-structure-guidelines.md#:~:text=each%20subcomponent%20can%20mirror%20the%20overall%20structure%20of%20a%20simple%20component.); 
+It wouldn't make sense to put it under geo as it can also contain materials. This is similar to the Assembly structure, where Components are outside the geo scope.
+ 
+
 **Simple Subcomponent** (Bucket example) Variations to consider:
 
+In this example I want to show an asset that doesn't use render purposes and has an articulated piece, the handle.
 ```
 /Bucket                 (xform) ← Component Kind
     /geo                (scope)
@@ -63,6 +65,8 @@ are a [kind](https://openusd.org/release/glossary.html#usdglossary-kind) that ca
     /Bucket             (class) ← Inherited by /<component>
 ```
 
+In this variation, the handle is made out of many prims (wire, handle) and we want all of them to move together.\
+We group them under a xform prim that will be located in the pivot position.
 ```
 /Bucket                 (xform) ← Component Kind
     /geo                (scope)
@@ -75,7 +79,7 @@ are a [kind](https://openusd.org/release/glossary.html#usdglossary-kind) that ca
     /Bucket             (class) ← Inherited by /<component>
 ```
 
-Subcomponents should be outside of geo, right?
+Subcomponents should be outside of asset/geo, right?
 
 ```
 /Bucket                 (xform) ← Component Kind
