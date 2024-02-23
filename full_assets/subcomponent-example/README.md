@@ -1,6 +1,29 @@
 
 TODO & Questions:
-- todo: Cleanup Example asset composition.
+- todo: pipe to extract transcribes from meetings.
+  - use local LLM
+  - make batch script that runs over all recordings.
+  - workflow? -- Find recordings, transcribe, save as <record_name>.txt/vtt
+- todo: [next] re-listen call & take notes.
+  - Meeting Takeaways:
+    - Some assets might want to have more subcomponents to enable two-way posing.
+      Bucket receptacle and handle will rotate from the same pivot position.
+    - for scalability: geo, mtl scopes should be instanceable. purposes nice for VP
+    - note: set dressing artists can do sims
+    - Target of the PR --Components w/Subcomponents in the case of instancing and dressing. -- what is needed to consider when doing that.
+    - Showing people my example of variants where some are defined in the asset and some in the shot is valuable.
+      even if it's not the most efficient way to do it. "This is a way to do it it comes with its own tradeoffs"
+    - "it makes sense for this workflow to have the assets structured this way"
+    - risk, if it gets too complicated. carefully to not make it hard to get your head around it. who is the audience, how much capacity they have.
+    - "if you want to save a pivot, you should make it a prim. and mark as subcomponent"
+    - openExec will be able to create constraints to solve corkscrew and door+bucket.
+    - note: skip usdSkel and rigSwapping for this release.
+    - subcomponents out of /geo
+    - recommended to have a subcomponent prim parent over the child mesh prim, DONT use nested gprims.
+    - note: group kind is supposed to be Model hierarchy and subcomponents are not Models. dont use it.
+- todo: ...
+- todo: mention bad practices. And make sure the example assets dont have them.
+- todo: Cleanup Example asset composition. --simplify and describe what its happening, different levels of complexity.
 - todo: add comparison between proxy and render. VP + Outliner
 
 
@@ -26,47 +49,39 @@ I would expect Box to not be triplicated in memory. Is this a case where Hydra w
 
 # How to take advantage of subcomponents in production
 
-<img src="screenshots/Bucket_articulated.gif" width="400"/>
-<img src="screenshots/WoodenTable_articulated.gif" width="400"/>
+<img src="screenshots/Bucket_articulated.gif" width="350"/>
+<img src="screenshots/WoodenTable_articulated.gif" width="350"/>
 
 ## What are Subcomponents?
 In USD terms, [subcomponents](https://openusd.org/release/glossary.html#usdglossary-subcomponent)
 are a [kind](https://openusd.org/release/glossary.html#usdglossary-kind) that can be assigned to a prim.
 
 > **Callout:**
-> Before continue reading, please have a look at the **Asset Structure Guidelines** if you are not familiar with it,
+> Before continuing to read, please have a look at the **Asset Structure Guidelines** if you are not familiar with them,
 as it explains some concepts I'm going to be talking about.
 > https://github.com/usd-wg/assets/blob/main/docs/asset-structure-guidelines.md
 
 
 ## Composition
 
+In this section there will be some examples ordered from simple to complete. Where the complete has the most features and is a better structure for scale.
+
+
 Main considerations:
-- Where is the kind applied? Directly to the mesh prim or to a parent xform.
+- Where is the kind applied? Directly to the mesh prim or to a parent xform. --Recommended parent xform
   - If using render purposes it has to be into a parent xform prim, so we can have the render, proxy scopes under it.
 - Using render purpose?
   - If so, the subcomponent kind has to be applied into a parent xform prim, so we can have the render, proxy scopes under it.\
     This way both representations get the same transformations.
-- Should Subcomponent prims be under asset/ or under asset/geo ?
+- Should Subcomponent prims be under asset/ or under asset/geo ? --Recommended under asset/ so we can use instancing.
   - If we [mirror the overall structure of a Component for each Subcomponent](https://github.com/Lucas3Dspain/assets/blob/guidelines-subcomponent/docs/asset-structure-guidelines.md#:~:text=each%20subcomponent%20can%20mirror%20the%20overall%20structure%20of%20a%20simple%20component.); 
 It wouldn't make sense to put it under geo as it can also contain materials. This is similar to the Assembly structure, where Components are outside the geo scope.
  
+- we can do a from best to worst structure. Or a from simple to complete, where complete has the most features + scalable.
 
-**Simple Subcomponent** (Bucket example) Variations to consider:
+**Simple Subcomponent** (Variations to consider):
 
-In this example I want to show an asset that doesn't use render purposes and has an articulated piece, the handle.
-```
-/Bucket                 (xform) ← Component Kind
-    /geo                (scope)
-        /bucket         (mesh)
-        /handle         (mesh) ← Subcomponent Kind★
-    /mtl                (scope)
-/\_\_class\_\_          (class)
-    /Bucket             (class) ← Inherited by /<component>
-```
-
-In this variation, the handle is made out of many prims (wire, handle) and we want all of them to move together.\
-We group them under a xform prim that will be located in the pivot position.
+In this example I want to show an asset that doesn't use render purposes and has an articulated piece, the handle. Explain issues with instancing.
 ```
 /Bucket                 (xform) ← Component Kind
     /geo                (scope)
@@ -75,98 +90,80 @@ We group them under a xform prim that will be located in the pivot position.
             /wire       (mesh)
             /handle     (mesh)
     /mtl                (scope)
-/\_\_class\_\_          (class)
+/__class__              (class)
     /Bucket             (class) ← Inherited by /<component>
 ```
 
-Subcomponents should be outside of asset/geo, right?
-
+In this variation, the handle is made out of many prims (wire, handle) and we want all of them to move together.\
+We group them under a xform prim that will be located in the pivot position. this way we can have /geo as instanceable.
 ```
 /Bucket                 (xform) ← Component Kind
-    /geo                (scope)
+    /geo                (scope) ← Instanceable★
+        /bucket         (mesh)
     /mtl                (scope)
-    /handle             (xform) ← Subcomponent Kind★
-        /geo            (scope)
-/\_\_class\_\_          (class)
+    /handle             (xform) ← Subcomponent Kind
+        /geo            (scope) ← Instanceable★
+            /wire       (mesh)
+            /handle     (mesh)
+/__class__              (class)
     /Bucket             (class) ← Inherited by /<component>
 ```
 
-**Simple Subcomponent - With Purpose Scopes** (Bucket example)
+**Simple Subcomponent - With Purpose Scopes** (Recommended)
+
+todo: explain render scopes like in Asset Guidelines. Twist on benefits for articulation.
 
 ```
 /Bucket                 (xform) ← Component Kind
-    /geo                (scope)
+    /geo                (scope) ← Instanceable
         /proxy          (scope) ← Purpose: proxy★
         /render         (scope) ← Purpose: render★
     /mtl                (scope)
-    /handle             (scope) ← Subcomponent Kind★
-        /geo            (scope)
+    /handle             (xform) ← Subcomponent Kind
+        /geo            (scope) ← Instanceable
             /proxy      (scope) ← Purpose: proxy★
             /render     (scope) ← Purpose: render★
-        /mtl            (scope)
-/\_\_class\_\_          (class)
+/__class__              (class)
     /Bucket             (class) ← Inherited by /<component>
 ```
 
 **Shallow Subcomponent** (WoodenTable example)
 
-```
-/WoodenTable            (xform) ← Component Kind
-    /geo                (scope)
-        /render         (scope)
-        /proxy          (scope)
-        /door           (scope) ← Subcomponent Kind★
-            /render     (scope)
-            /proxy      (scope)
-        /drawers        (xform) ← Group Kind★
-            /drawer1    (scope) ← Subcomponent Kind★
-                /render (scope)
-                /proxy  (scope)
-            /drawer2    (scope) ← Subcomponent Kind★
-            /drawer3    (scope) ← Subcomponent Kind★
-            /drawer4    (scope) ← Subcomponent Kind★
-    /mtl                (scope)
-/\_\_class\_\_          (class)
-    /WoodenTable        (class) ← Inherited by /<component>
-```
-
-Subcomponents should be outside of geo, right?
+todo: Keep Subcomponents outside /geo and don't use Group Kind.
 
 ```
 /WoodenTable        (xform) ← Component Kind
-    /geo            (scope)
+    /geo            (scope) ← Instanceable
+        /proxy      (scope) ← Purpose: proxy
+        /render     (scope) ← Purpose: render
     /mtl            (scope)
-    /door           (scope) ← Subcomponent Kind★
-        /geo        (scope)
-        /mtl        (scope)
-    /drawers        (xform) ← Group Kind★
-        /drawer1    (scope) ← Subcomponent Kind★
+    /door           (xform) ← Subcomponent Kind★
+        /geo        (scope) ← Instanceable
+    /drawers        (xform) ← Make sure this is not Group Kind★
+        /drawer1    (xform) ← Subcomponent Kind★
             /geo    (scope)
-            /mtl    (scope)
-        /drawer2    (scope) ← Subcomponent Kind★
-        /drawer3    (scope) ← Subcomponent Kind★
-        /drawer4    (scope) ← Subcomponent Kind★
-/\_\_class\_\_      (class)
+        /drawer2    (xform) ← Subcomponent Kind★
+        /drawer3    (xform) ← Subcomponent Kind★
+        /drawer4    (xform) ← Subcomponent Kind★
+/__class__          (class)
     /WoodenTable    (class) ← Inherited by /<component>
 ```
 
 **Nested Subcomponent** (Antenna example)
 
+
 ```
 /Antenna                (xform) ← Component Kind
-    /geo                (scope)
+    /geo                (scope) ← Instanceable
     /mtl                (scope)
-    /base               (scope) ← Subcomponent Kind★
-        /geo            (scope)
-        /mtl            (scope)
-        /upperArm       (scope) ← Subcomponent Kind★
-            /geo        (scope)
-            /mtl        (scope)
-            /lowerArm   (scope) ← Subcomponent Kind★
-                /geo    (scope)
-                /mtl    (scope)
+    /base               (xform) ← Subcomponent Kind★
+        /geo            (scope) ← Instanceable
+        /upperArm       (xform) ← Subcomponent Kind★
+            /geo        (scope) ← Instanceable
+            /lowerArm   (xform) ← Subcomponent Kind★
+                /geo    (scope) ← Instanceable
                 /...
-/\_\_class\_\_      (class)
+/__class__          (class)
     /Antenna        (class) ← Inherited by /<component>
 ```
 
@@ -212,6 +209,8 @@ note: this workflow allows maximum flexibility at the cost of instancing. see mo
 #### Optimization & instancing
 Articulated assets come with a limitation – they cannot be both posed and instanced simultaneously.\
 This is due to the fact that when a parent prim is made instanceable, the child prims won't receive any edits.
+
+todo: rephrase this to explain exactly what the limitation is regarding instancing. SIGGRAPH 23 meeting.
 
 To address this limitation, a workaround can be employed, particularly when a few distinct poses are enough.
 
